@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import FetchMessage from './FetchMessage'
+import "./index.css"
 
 export default function App() {
   const [count, setCount] = useState(0)
