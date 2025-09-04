@@ -22,22 +22,6 @@ test.describe("TodoList Integration", () => {
     await expect(todo).toHaveClass(/line-through/);
   });
 
-//   test("should edit a todo", async ({ page }) => {
-//     await page.fill('input[placeholder="Enter a task..."]', "Old Task");
-//     await page.click('button:has-text("Add")');
-
-//     // Click edit
-//     const todoItem = page.locator("ul li", { hasText: "Old Task" });
-//     await todoItem.locator('button:has-text("Edit")').click();
-
-//     // Fill only the editing input inside the todo
-//     // const editInput = todoItem.locator('input[type="text"]');
-//     // await editInput.fill("Updated Task");
-
-//     await todoItem.locator('button:has-text("Save")').click();
-
-//     await expect(todoItem).toContainText("Updated Task");
-//   });
 
   test("should delete a todo", async ({ page }) => {
     await page.fill('input[placeholder="Enter a task..."]', "Delete me");
