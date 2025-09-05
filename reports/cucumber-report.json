@@ -1,0 +1,213 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "todo-list-management;add-a-new-todo-item",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "Add a new todo item",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I open the Todo app",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1961829336
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 5,
+            "name": "I add a todo \"Buy milk\"",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 230278583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 6,
+            "name": "I should see \"Buy milk\" in the list",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16718781
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 44377258
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "todo-list-management;mark-todo-as-completed",
+        "keyword": "Scenario",
+        "line": 8,
+        "name": "Mark todo as completed",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "I open the Todo app",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 506810589
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I add a todo \"Wash car\"",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 131529620
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 11,
+            "name": "I toggle the todo \"Wash car\"",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 42946351
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "the todo \"Wash car\" should be marked as completed",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9719102
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 51589019
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "todo-list-management;delete-a-todo-item",
+        "keyword": "Scenario",
+        "line": 14,
+        "name": "Delete a todo item",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 15,
+            "name": "I open the Todo app",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 361613494
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 16,
+            "name": "I add a todo \"Read book\"",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 146088257
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 17,
+            "name": "I delete the todo \"Read book\"",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 46034704
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I should not see \"Read book\" in the list",
+            "match": {
+              "location": "tests/bdd/steps/todo.steps.cjs:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 207076089
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 64026206
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "todo-list-management",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Todo List management",
+    "tags": [],
+    "uri": "tests/bdd/features/todo.feature"
+  }
+]
