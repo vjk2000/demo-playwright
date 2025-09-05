@@ -71,8 +71,6 @@
 #           path: playwright-report
 #           retention-days: 30
 
-
-
 name: CI - tests
 
 on:
@@ -91,28 +89,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (build)
         uses: actions/setup-node@v4
         with:
           node-version: 24
 
-      - name: Install dependencies
+      - name: Install dependencies (build)
         run: npm ci
 
       - name: Build production bundle
         run: npm run build
 
-      - name: Upload build artifacts
+      - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            dist
-            node_modules
+          path: dist
           retention-days: 1
 
-  test:
-    name: Run Playwright Tests + Cucumber BDD
+  playwright:
+    name: Run Playwright Tests
     runs-on: ubuntu-latest
     needs: build
     timeout-minutes: 30
@@ -127,16 +123,17 @@ jobs:
           name: build-artifacts
           path: .
 
-      - name: Setup Node.js
+      - name: Setup Node.js (playwright)
         uses: actions/setup-node@v4
         with:
           node-version: 24
 
-      # ensure Playwright browsers and OS deps are available
-      - name: Install Playwright browsers & dependencies
+      - name: Install dependencies (playwright)
+        run: npm ci
+
+      - name: Install Playwright browsers & OS deps
         run: npx playwright install --with-deps
 
-      # Run Playwright tests (will use playwright.config.ts)
       - name: Run Playwright tests
         run: npx playwright test --reporter=list
 
@@ -148,8 +145,34 @@ jobs:
           path: playwright-report
           retention-days: 30
 
-      # ----- Start a static server for dist and run cucumber-js -----
-      - name: Run Cucumber BDD (start server + run cucumber)
+  cucumber:
+    name: Run Cucumber BDD
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+
+      - name: Setup Node.js (cucumber)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies (cucumber)
+        run: npm ci
+
+      - name: Install Playwright browsers & OS deps (cucumber)
+        run: npx playwright install --with-deps
+
+      - name: Run Cucumber BDD (start static server + cucumber)
         env:
           BASE_URL: http://127.0.0.1:5173
         run: |
@@ -160,10 +183,10 @@ jobs:
           # wait until server responds
           npx wait-on http://127.0.0.1:5173
 
-          # run cucumber-js explicitly requiring step defs
+          # run cucumber-js explicitly requiring step defs & using config
           npx cucumber-js --config tests/bdd/cucumber.cjs --require tests/bdd/steps/**/*.cjs
 
-          # kill the server when done (best-effort)
+          # best-effort teardown
           kill $HTTP_SERVER_PID || true
 
       - name: Upload Cucumber JSON report
@@ -173,4 +196,5 @@ jobs:
           name: cucumber-report-json
           path: reports/cucumber-report.json
           retention-days: 30
+
 
