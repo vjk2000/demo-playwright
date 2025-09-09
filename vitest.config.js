@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()], // Add React plugin for JSX support
   test: {
     environment: "jsdom",
+    globals: true, // This makes expect available globally
     include: ["src/__tests__/**/*.test.{js,jsx,ts,tsx}"], // ✅ only React unit tests
     exclude: [
       "node_modules",

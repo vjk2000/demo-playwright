@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import TodoList from './components/TodoList'
+import Header from './pages/header'
 import "./index.css"
 
 export default function App() {
@@ -7,7 +8,7 @@ export default function App() {
   return (
     <div >
       
-      <TodoList />
+      <Header/>
     </div>
   )
 }
