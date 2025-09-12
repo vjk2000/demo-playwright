@@ -64,7 +64,7 @@ export default function TodoList() {
   const activeCount = todos.filter((todo) => !todo.completed).length;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-200">
+    <div className="flex flex-col items-center justify-center p-10 bg-gradient-to-br from-blue-100 to-purple-50">
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-lg transition-all duration-300">
         <h1 className="text-3xl font-extrabold text-purple-700 mb-6 text-center tracking-wide">
           Todo List

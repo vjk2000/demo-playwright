@@ -1,4 +1,4 @@
-name: CI - tests
+name: CI - tests & deploy
 
 on:
   push:
@@ -135,17 +135,10 @@ jobs:
         env:
           BASE_URL: http://127.0.0.1:5173
         run: |
-          # start static server in background serving ./dist
           npx http-server ./dist -p 5173 -s &
           HTTP_SERVER_PID=$!
-
-          # wait until server responds
           npx wait-on http://127.0.0.1:5173
-
-          # run cucumber-js explicitly requiring step defs & using config
           npx cucumber-js --config tests/bdd/cucumber.cjs --require tests/bdd/steps/**/*.cjs
-
-          # best-effort teardown
           kill $HTTP_SERVER_PID || true
 
       - name: Upload Cucumber JSON report
@@ -156,130 +149,30 @@ jobs:
           path: reports/cucumber-report.json
           retention-days: 30
 
-# name: CI - tests
+  deploy:
+    name: Deploy React App to NGINX
+    runs-on: ubuntu-latest
+    needs: [build, unit-tests, playwright, cucumber]
+    timeout-minutes: 20
 
-# on:
-#   push:
-#     branches: [ main, master ]
-#   pull_request:
-#     branches: [ main, master ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-# jobs:
-#   build:
-#     name: Build Project
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 30
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
 
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Setup Node.js (build)
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 24
-
-#       - name: Install dependencies (build)
-#         run: npm ci
-
-#       - name: Build production bundle
-#         run: npm run build
-
-#       - name: Upload dist artifact
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: build-artifacts
-#           path: dist
-#           retention-days: 1
-
-#   playwright:
-#     name: Run Playwright Tests
-#     runs-on: ubuntu-latest
-#     needs: build
-#     timeout-minutes: 30
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Download build artifacts
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: build-artifacts
-#           path: .
-
-#       - name: Setup Node.js (playwright)
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 24
-
-#       - name: Install dependencies (playwright)
-#         run: npm ci
-
-#       - name: Install Playwright browsers & OS deps
-#         run: npx playwright install --with-deps
-
-#       - name: Run Playwright tests
-#         run: npx playwright test --reporter=list
-
-#       - name: Upload Playwright HTML report
-#         if: ${{ always() }}
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: playwright-report
-#           path: playwright-report
-#           retention-days: 30
-
-#   cucumber:
-#     name: Run Cucumber BDD
-#     runs-on: ubuntu-latest
-#     needs: build
-#     timeout-minutes: 30
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Download build artifacts
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: build-artifacts
-#           path: .
-
-#       - name: Setup Node.js (cucumber)
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 24
-
-#       - name: Install dependencies (cucumber)
-#         run: npm ci
-
-#       - name: Install Playwright browsers & OS deps (cucumber)
-#         run: npx playwright install --with-deps
-
-#       - name: Run Cucumber BDD (start static server + cucumber)
-#         env:
-#           BASE_URL: http://127.0.0.1:5173
-#         run: |
-#           # start static server in background serving ./dist
-#           npx http-server ./dist -p 5173 -s &
-#           HTTP_SERVER_PID=$!
-
-#           # wait until server responds
-#           npx wait-on http://127.0.0.1:5173
-
-#           # run cucumber-js explicitly requiring step defs & using config
-#           npx cucumber-js --config tests/bdd/cucumber.cjs --require tests/bdd/steps/**/*.cjs
-
-#           # best-effort teardown
-#           kill $HTTP_SERVER_PID || true
-
-#       - name: Upload Cucumber JSON report
-#         if: ${{ always() }}
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: cucumber-report-json
-#           path: reports/cucumber-report.json
-#           retention-days: 30
-
-
+      - name: Deploy to NGINX server via SSH/rsync
+        uses: burnett01/rsync-deployments@v5.1
+        with:
+          switches: "-avz --delete"
+          path: "dist/"
+          remote_path: "/var/www/app"
+          remote_host: "192.168.14.157"
+          remote_user: "deploy"
+          ssh_private_key: ${{ secrets.DEPLOY_KEY }}
+          pre_deploy: "echo 'Starting deployment...'"
+          post_deploy: "echo 'Deployment finished! Reloading NGINX...' && sudo systemctl reload nginx"

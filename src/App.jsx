@@ -3,12 +3,18 @@ import TodoList from './components/TodoList'
 import Header from './pages/header'
 import "./index.css"
 
+
 export default function App() {
 
   return (
     <div >
+
+
+      <TodoList/>
       
-      <Header/>
+      
+      {/* <Header/> */}
+      
     </div>
   )
 }
